@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(ggplot2)\n\ndata <- read.csv(\"train.csv\")\ndata$Survived = as.factor(data$Survived)\n\ndata$Age[is.na(data$Age)] <- 0\n\n# plot class survived\nggplot(data = data, aes(x = Pclass, color = Survived)) + geom_histogram()\n  \n# plot sex survived\nggplot(data = data, aes(x = Sex, color = Survived)) + geom_histogram(stat = \"count\")\n\n# plot siblings survived\nggplot(data = data, aes(x = SibSp, color = Survived)) + geom_histogram()\n\n# plot parents survived\nggplot(data = data, aes(x = Parch, color = Survived)) + geom_histogram()\n\n# plot fare survived\nggplot(data = data, aes(x = Fare, color = Survived)) + geom_histogram()\n\n# plot station embarked survived\nggplot(data = data, aes(x = Embarked, color = Survived)) + geom_histogram(stat=\"count\")\n\n# train a model, consider Pclass, Sex, Age as features\nlibrary(randomForest)\nfit <- randomForest(Survived ~ Pclass + Sex + Age, data = data)\nprint(fit)\nimportance(fit)\n\n# test against test data set\ntestData <- read.csv(\"test.csv\")\ntestData$Age[is.na(testData$Age)] <- 0\n\npredicted <- predict(fit, newdata = testData)\ntestData$Predicted <- predicted\nwrite.csv(testData[c('PassengerId', 'Predicted')], file=\"predicted.csv\")\n",
+    "created" : 1490841215994.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3082524033",
+    "id" : "989DA45",
+    "lastKnownWriteTime" : 1490843098,
+    "last_content_update" : 1490843098861,
+    "path" : "~/Documents/ai-ml/kaggle/titanic/explore.R",
+    "project_path" : "explore.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

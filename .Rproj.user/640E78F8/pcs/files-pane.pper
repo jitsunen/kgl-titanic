@@ -1,0 +1,9 @@
+{
+    "path" : "~/Documents/ai-ml/kaggle/titanic",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

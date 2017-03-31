@@ -1,0 +1,25 @@
+import pandas as pd
+from ggplot import *
+
+data = pd.read_csv("titanic/train.csv")
+
+# convert Survived to category 
+data['Survived.cat'] = data.Survived.astype('category')
+# convert Sex` to category 
+data['Sex_cat'] = data.Sex.astype('category')
+
+
+# plot histogram of class versus survival
+ggplot(data, aes(x = 'Pclass', fill = 'Survived.cat')) + \
+    geom_histogram() + \
+    xlab("Passenger Class")
+
+# plot histogram of age versus survival
+ggplot(data, aes(x = 'Age', fill = 'Survived.cat')) + \
+    geom_histogram() + \
+    xlab("Age")
+
+# plot histogram of sex versus survival
+ggplot(data, aes(x = 'Sex')) + \
+    geom_histogram() + \
+    xlab("Sex")
