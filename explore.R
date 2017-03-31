@@ -3,7 +3,11 @@ library(ggplot2)
 data <- read.csv("train.csv")
 data$Survived = as.factor(data$Survived)
 
-data$Age[is.na(data$Age)] <- 0
+# fill in missing values for age
+data$Age[is.na(data$Age)] <- mean(data$Age, na.rm = TRUE)
+
+# plot age survived
+ggplot(data = data, aes(x = Age, color = Survived)) + geom_histogram(binwidth = 1)
 
 # plot class survived
 ggplot(data = data, aes(x = Pclass, color = Survived)) + geom_histogram()
@@ -31,7 +35,7 @@ importance(fit)
 
 # test against test data set
 testData <- read.csv("test.csv")
-testData$Age[is.na(testData$Age)] <- 0
+testData$Age[is.na(testData$Age)] <- mean(data$Age, na.rm = TRUE)
 
 predicted <- predict(fit, newdata = testData)
 testData$Predicted <- predicted
