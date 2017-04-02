@@ -1,42 +1,44 @@
 library(ggplot2)
+library(party)
 
-data <- read.csv("train.csv")
-data$Survived = as.factor(data$Survived)
+loadScripts <- function(){
+  source("preProcess.R")
+}
 
-# fill in missing values for age
-data$Age[is.na(data$Age)] <- mean(data$Age, na.rm = TRUE)
+loadData <- function(){
+  data <- read.csv("train.csv")
+  data$Survived = as.factor(data$Survived)
+  data
+}
 
-# plot age survived
-ggplot(data = data, aes(x = Age, color = Survived)) + geom_histogram(binwidth = 1)
-
-# plot class survived
-ggplot(data = data, aes(x = Pclass, color = Survived)) + geom_histogram()
-  
-# plot sex survived
-ggplot(data = data, aes(x = Sex, color = Survived)) + geom_histogram(stat = "count")
-
-# plot siblings survived
-ggplot(data = data, aes(x = SibSp, color = Survived)) + geom_histogram()
-
-# plot parents survived
-ggplot(data = data, aes(x = Parch, color = Survived)) + geom_histogram()
-
-# plot fare survived
-ggplot(data = data, aes(x = Fare, color = Survived)) + geom_histogram()
-
-# plot station embarked survived
-ggplot(data = data, aes(x = Embarked, color = Survived)) + geom_histogram(stat="count")
+loadScripts();
+data <- loadData();
+data <- preProcess(data)
 
 # train a model, consider Pclass, Sex, Age as features
 library(randomForest)
-fit <- randomForest(Survived ~ Pclass + Sex + Age, data = data)
+fit <- randomForest(Survived ~ Pclass + Sex + Age + Fare + Parch + SibSp + Embarked + FamilySize, data = data)
 print(fit)
-importance(fit)
+importance(fit) 
 
 # test against test data set
 testData <- read.csv("test.csv")
-testData$Age[is.na(testData$Age)] <- mean(data$Age, na.rm = TRUE)
+testData <- preProcess(testData)
 
-predicted <- predict(fit, newdata = testData)
+spredicted <- predict(fit, newdata = testData)
 testData$Predicted <- predicted
-write.csv(testData[c('PassengerId', 'Predicted')], file="predicted.csv")
+write.csv(testData[c('PassengerId', 'Predicted')], 
+          file="predicted-rf.csv", 
+          col.names = c('PassengerId','Survived'), 
+          row.names = FALSE)
+
+# use a conditional forest prediction algo
+set.seed(415)
+fit <- cforest(Survived ~ Pclass + Sex + Age + Fare + Parch + SibSp + Embarked,
+               data = data, controls=cforest_unbiased(ntree=2000, mtry=3)) 
+print(fit)
+importance(fit)
+
+Prediction <- predict(fit, testData, OOB=TRUE, type = "response")
+submit <- data.frame(PassengerId = testData$PassengerId, Survived = Prediction)
+write.csv(submit, file = "prediction_cf.csv", row.names = FALSE)

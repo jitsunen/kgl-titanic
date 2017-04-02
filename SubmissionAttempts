@@ -1,2 +1,9 @@
 Naive Attempt - 0.74641
 Second attempt after setting missing Age to mean - 0.75120
+Third attempt after using Pclass, Sex, Age, Embarked - 0.76077
+Fourth attempt after using Pclass, Sex, Age, Fare, Embarked, SibSp, Parch = 0.78947 
+Attempt with conditional forest algo = 0.78469
+
+
+Problems
+- Rstudio keeps crashing
